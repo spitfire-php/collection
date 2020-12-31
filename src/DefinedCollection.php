@@ -2,6 +2,7 @@
 
 use ArrayAccess;
 use BadMethodCallException;
+use Exception;
 use spitfire\exceptions\OutOfRangeException;
 use spitfire\exceptions\PrivateException;
 
@@ -36,6 +37,9 @@ use spitfire\exceptions\PrivateException;
  * In Spitfire we just wrap a few array functions inside this class to provide the
  * consistent behavior and extendability that we need.
  * 
+ * @implements ArrayAccess<string|int, mixed>
+ * @implements CollectionInterface<string|int,mixed>
+ * 
  * @author César de la Cal Bretschneider <cesar@magic3w.com>
  */
 class DefinedCollection implements ArrayAccess, CollectionInterface
@@ -67,11 +71,11 @@ class DefinedCollection implements ArrayAccess, CollectionInterface
 	 * callback to each of them. The value your function returns if placed in the
 	 * array.
 	 * 
-	 * @param callable|array $callable
-	 * @return Collection
+	 * @param callable|string[] $callable
+	 * @return Collection<string, mixed>
 	 * @throws BadMethodCallException
 	 */
-	public function each($callable) {
+	public function each($callable) : Collection {
 		
 		/*
 		 * If the callback provided is not a valid callable then the function cannot
@@ -148,7 +152,7 @@ class DefinedCollection implements ArrayAccess, CollectionInterface
 	 * 
 	 * @return int
 	 */
-	public function count() {
+	public function count() : int {
 		return count($this->items);
 	}
 	
@@ -167,13 +171,11 @@ class DefinedCollection implements ArrayAccess, CollectionInterface
 	/**
 	 * Adds the elements from the array / collection provided to the current one.
 	 * 
-	 * @param mixed[] $elements
+	 * @param DefinedCollection $elements
 	 * @return DefinedCollection
 	 */
-	public function add($elements) {
-		if ($elements instanceof Collection) { $elements = $elements->toArray(); }
-		
-		$this->items = array_merge($this->items, $elements);
+	public function add(DefinedCollection $elements) {
+		$this->items = array_merge($this->items, $elements->toArray());
 		return $this;
 	}
 	
@@ -182,11 +184,11 @@ class DefinedCollection implements ArrayAccess, CollectionInterface
 	 * 
 	 * @param mixed $element
 	 * @return DefinedCollection
-	 * @throws OutOfRangeException
+	 * @throws OutOfBoundsException
 	 */
 	public function remove($element) {
 		$i = array_search($element, $this->items, true);
-		if ($i === false) { throw new OutOfRangeException('Not found', 1804292224); }
+		if ($i === false) { throw new OutOfBoundsException('Not found', 1804292224); }
 		
 		unset($this->items[$i]);
 		return $this;
@@ -254,11 +256,11 @@ class DefinedCollection implements ArrayAccess, CollectionInterface
 	 * 
 	 * @param string|int $offset
 	 * @return mixed
-	 * @throws OutOfRangeException
+	 * @throws OutOfBoundsException
 	 */
 	public function offsetGet($offset) {
 		if (!array_key_exists($offset, $this->items)) {
-			throw new OutOfRangeException('Undefined index: ' . $offset, 1703221322);
+			throw new OutOfBoundsException('Undefined index: ' . $offset, 1703221322);
 		}
 		
 		return $this->items[$offset];
@@ -298,10 +300,10 @@ class DefinedCollection implements ArrayAccess, CollectionInterface
 	 * last item.
 	 * 
 	 * @return mixed
-	 * @throws PrivateException
+	 * @throws OutOfBoundsException
 	 */
 	public function last() {
-		if (!isset($this->items)) { throw new PrivateException('Collection error', 1709042046); }
+		if (empty($this->items)) { throw new OutOfBoundsException('Collection is empty', 1709042046); }
 		return end($this->items);
 	}
 	
@@ -315,7 +317,17 @@ class DefinedCollection implements ArrayAccess, CollectionInterface
 		return array_shift($this->items);
 	}
 	
-	public function slice($start, $size = false) {
+	/**
+	 * Extracts a section of the collection, returning the extracted segment.
+	 * 
+	 * @param int $start
+	 * @param int $size
+	 * @return Collection
+	 * @throws Exception
+	 */
+	public function slice(int $start, int $size = 0) : Collection 
+	{
+		if ($size < 0) { throw new Exception('Invalid range'); }
 		if ($size) { return new Collection(array_slice($this->items, $start, $size)); }
 		else       { return new Collection(array_slice($this->items, $start)); }
 	}
@@ -348,8 +360,8 @@ class DefinedCollection implements ArrayAccess, CollectionInterface
 	 * This is functionally identical to has(), but provides compatibility with 
 	 * the magic PHP method for isset()
 	 * 
-	 * @param type $name
-	 * @return type
+	 * @param string|int $name
+	 * @return bool
 	 */
 	public function __isset($name) {
 		return array_key_exists($name, $this->items);

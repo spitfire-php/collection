@@ -80,7 +80,12 @@ class Collection extends DefinedCollection
 		return array_sum($this->toArray());
 	}
 	
-	public function sort($callback = null) {
+	/**
+	 * 
+	 * @param callable $callback A callback to invoke to sort the collection
+	 * @return Collection
+	 */
+	public function sort($callback = null) : Collection {
 		$copy = $this->toArray();
 		
 		if (!$callback) { sort($copy); }
@@ -99,7 +104,12 @@ class Collection extends DefinedCollection
 		return $this->sum() / $this->count();
 	}
 	
-	public function join($glue) {
+	/**
+	 * 
+	 * @param string $glue
+	 * @return string
+	 */
+	public function join(string $glue) : string {
 		return implode($glue, $this->toArray());
 	}
 	
@@ -111,8 +121,9 @@ class Collection extends DefinedCollection
 	 * will return null if the key is undefined in the array or object being used.
 	 * 
 	 * @param mixed $key
+	 * @return Collection
 	 */
-	public function extract($key) {
+	public function extract($key) : Collection {
 		return new Collection(array_map(function ($e) use ($key) {
 			if (is_array($e))  { return isset($e[$key])? $e[$key] : null; }
 			if (is_object($e)) { return isset($e->$key)? $e->$key : null; }
@@ -133,7 +144,7 @@ class Collection extends DefinedCollection
 	 * <code>$c->groupBy(function ($e) { return strlen($e); });</code>
 	 * [ 1 => ['a', 'b', 'c'], 2 => ['dd', 'ee'] ]
 	 * 
-	 * @param Closure|callable $callable
+	 * @param \Closure|callable $callable
 	 * @return Collection
 	 */
 	public function groupBy($callable) {
@@ -152,7 +163,12 @@ class Collection extends DefinedCollection
 		return $groups;
 	}
 	
-	public function reverse() {
+	/**
+	 * Returns a collection that has the same elements, but in reverse order.
+	 * 
+	 * @return Collection
+	 */
+	public function reverse() : Collection {
 		return new Collection(array_reverse($this->toArray()));
 	}
 

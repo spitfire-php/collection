@@ -1,8 +1,8 @@
 <?php namespace spitfire\collection;
 
-class OutOfBoundsException extends PrivateException
+use Exception;
+
+class OutOfBoundsException extends Exception
 {
-	
-	
 	
 }

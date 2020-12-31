@@ -37,6 +37,10 @@ use Iterator;
  * The collection should always be able to provide an array for the data it 
  * contains via the toArray() method. It is possible though that this method
  * throws an exception to indicate that the data cannot be casted to array.
+ * 
+ * @template TKEY
+ * @template TVALUE
+ * @extends Iterator<string|int,mixed>
  */
 interface CollectionInterface extends Iterator
 {
@@ -51,8 +55,10 @@ interface CollectionInterface extends Iterator
 	/**
 	 * Counts the number of elements that the collection holds. This method may
 	 * throw an exception if the set's size is undefined.
+	 * 
+	 * @return int
 	 */
-	function count();
+	function count() : int;
 	
 	/**
 	 * Removes the first element from the collection (shifts it off).
@@ -69,7 +75,7 @@ interface CollectionInterface extends Iterator
 	 * @param callable $callback Function returning a boolean value that indicates 
 	 *                           whether the element should be removed.
 	 * 
-	 * @return CollectionInterface The filtered collection.
+	 * @return Collection<string|int, mixed> The filtered collection.
 	 */
 	function filter($callback = null);
 	
@@ -78,10 +84,10 @@ interface CollectionInterface extends Iterator
 	 * the return value will be placed in the output collection.
 	 * 
 	 * @param callable $callable Function to be applied to each element
-	 * @return CollectionInterface The collection of elements after the function 
+	 * @return Collection<string,mixed> The collection of elements after the function 
 	 *                             was applied
 	 */
-	function each($callable);
+	function each($callable) : Collection;
 	
 	/**
 	 * Reduces the collection to a single element. It does this by looping over 
@@ -90,6 +96,7 @@ interface CollectionInterface extends Iterator
 	 * 
 	 * @param callable $callable
 	 * @param mixed    $initial
+	 * @return mixed
 	 */
 	function reduce($callable, $initial = null);
 	
