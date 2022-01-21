@@ -40,7 +40,7 @@ use Iterator;
  * 
  * @template TKEY
  * @template TVALUE
- * @extends Iterator<string|int,mixed>
+ * @extends Iterator<TKEY,TVALUE>
  */
 interface CollectionInterface extends Iterator
 {
@@ -63,7 +63,7 @@ interface CollectionInterface extends Iterator
 	/**
 	 * Removes the first element from the collection (shifts it off).
 	 * 
-	 * @return mixed
+	 * @return TVALUE
 	 */
 	function shift();
 	
@@ -75,7 +75,7 @@ interface CollectionInterface extends Iterator
 	 * @param callable $callback Function returning a boolean value that indicates 
 	 *                           whether the element should be removed.
 	 * 
-	 * @return Collection<string|int, mixed> The filtered collection.
+	 * @return CollectionInterface<TKEY,TVALUE> The filtered collection.
 	 */
 	function filter($callback = null);
 	
@@ -84,10 +84,10 @@ interface CollectionInterface extends Iterator
 	 * the return value will be placed in the output collection.
 	 * 
 	 * @param callable $callable Function to be applied to each element
-	 * @return Collection<string,mixed> The collection of elements after the function 
+	 * @return CollectionInterface<TKEY,TVALUE> The collection of elements after the function 
 	 *                             was applied
 	 */
-	function each($callable) : Collection;
+	function each($callable) : CollectionInterface;
 	
 	/**
 	 * Reduces the collection to a single element. It does this by looping over 
@@ -105,9 +105,7 @@ interface CollectionInterface extends Iterator
 	 * the event of a collection not being cast-able you will be required to catch
 	 * the exception generated.
 	 * 
-	 * @return mixed
-	 * @throws UndefinedCollectionException If the collection cannot be casted to array
-	 * @todo   Name the exception thrown.
+	 * @return TVALUE[]
 	 */
 	function toArray();
 	
