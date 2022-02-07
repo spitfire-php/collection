@@ -1,7 +1,7 @@
 <?php namespace spitfire\collection;
 
 /**
- * 
+ *
  * @template T
  * @extends Collection<T>
  */
@@ -9,24 +9,24 @@ class TypedCollection extends Collection
 {
 	
 	/**
-	 * 
+	 *
 	 * @var class-string<T>
 	 */
 	private $type;
 	
 	/**
-	 * 
+	 *
 	 * @param class-string<T> $type
 	 * @param Collection<T>|array<mixed,T>|null $e
 	 */
-	public function __construct(string $type, $e = null) 
+	public function __construct(string $type, $e = null)
 	{
 		$this->type = $type;
 		parent::__construct($e);
 	}
 	
 	/**
-	 * 
+	 *
 	 * @param Collection<T> $elements
 	 * @return TypedCollection<T>
 	 */
@@ -38,7 +38,7 @@ class TypedCollection extends Collection
 	}
 	
 	/**
-	 * 
+	 *
 	 * @param T $element
 	 * @return TypedCollection<T>
 	 */

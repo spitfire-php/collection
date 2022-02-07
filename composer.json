@@ -20,13 +20,23 @@
 	
 	"require-dev": {
 		"phpunit/phpunit": "^9.4",
-		"phpstan/phpstan": "^0.12.64"
+		"phpstan/phpstan": "^0.12.64",
+		"squizlabs/php_codesniffer": "dev-dev/scope-indent-blank-lines"
 	},
 	
 	"scripts": {
 		"test" : [
+			"./vendor/bin/phpcs ./src -s",
 			"./vendor/bin/phpunit ./tests/",
 			"./vendor/bin/phpstan analyse ./src/ --level 7"
 		]
-	}
+	},
+
+	"repositories":
+    [
+            {
+                "type": "vcs",
+                "url": "https://github.com/Csardelacal/PHP_Codesniffer"
+            }
+    ]
 }
