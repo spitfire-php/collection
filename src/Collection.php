@@ -285,8 +285,9 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * callback to each of them. The value your function returns if placed in the
 	 * array.
 	 *
-	 * @param callable|string[] $callable
-	 * @return Collection<T>
+	 * @template E
+	 * @param callable(T):E $callable
+	 * @return Collection<E>
 	 * @throws BadMethodCallException
 	 */
 	public function each($callable) : Collection
@@ -306,9 +307,10 @@ class Collection implements ArrayAccess, CollectionInterface
 	/**
 	 * Reduces the array to a single value using a callback function.
 	 *
-	 * @param callable $callback
-	 * @param mixed    $initial
-	 * @return mixed
+	 * @template E
+	 * @param callable(T,E):E $callback
+	 * @param E $initial
+	 * @return E
 	 */
 	public function reduce($callback, $initial = null)
 	{
@@ -355,7 +357,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * Please note that this will return a copy of the collection and the original
 	 * collection will remain unmodified.
 	 *
-	 * @param callable $callback
+	 * @param callable(T):bool $callback
 	 * @return Collection<T>
 	 */
 	public function filter($callback = null)
@@ -383,8 +385,8 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * Adds an item to the list of items. This function then returns the element
 	 * pushed. If you need method chaining, consider <code>$collection->add([$element])</code>
 	 *
-	 * @param mixed $element
-	 * @return mixed The element pushed
+	 * @param T $element
+	 * @return T The element pushed
 	 */
 	public function push($element)
 	{
@@ -407,7 +409,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	/**
 	 * Finds an item provided inside the collection and removes it from the collection.
 	 *
-	 * @param mixed $element
+	 * @param T $element
 	 * @return Collection<T>
 	 * @throws OutOfBoundsException
 	 */
@@ -525,7 +527,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * Resets the internal array pointer of the collection. This method returns
 	 * the first element from the array.
 	 *
-	 * @return T
+	 * @return T|null
 	 */
 	public function first()
 	{
@@ -562,7 +564,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * Shifts the first element off the array. This removes the first element and
 	 * returns it.
 	 *
-	 * @return T
+	 * @return T|null
 	 */
 	public function shift()
 	{
