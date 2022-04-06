@@ -308,7 +308,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * Reduces the array to a single value using a callback function.
 	 *
 	 * @template E
-	 * @param callable(T,E):E $callback
+	 * @param callable(E,T):E $callback
 	 * @param E $initial
 	 * @return E
 	 */
