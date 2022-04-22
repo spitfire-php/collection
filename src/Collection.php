@@ -524,14 +524,15 @@ class Collection implements ArrayAccess, CollectionInterface
 	}
 	
 	/**
-	 * Resets the internal array pointer of the collection. This method returns
+	 * Does not reset the internal array pointer of the collection. This method returns
 	 * the first element from the array.
 	 *
 	 * @return T|null
 	 */
 	public function first()
 	{
-		return $this->items[array_key_first($this->items)];
+		$key = array_key_first($this->items);
+		return $key? $this->items[$key] : null;
 	}
 	
 	/**
