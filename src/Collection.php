@@ -532,7 +532,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	public function first()
 	{
 		$key = array_key_first($this->items);
-		return $key? $this->items[$key] : null;
+		return $key !== null? $this->items[$key] : null;
 	}
 	
 	/**
