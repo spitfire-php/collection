@@ -443,7 +443,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 *
 	 * @return T
 	 */
-	public function current()
+	public function current() : mixed
 	{
 		return current($this->items);
 	}
@@ -453,7 +453,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 *
 	 * @return int|string|null
 	 */
-	public function key()
+	public function key() : mixed
 	{
 		return key($this->items);
 	}
@@ -493,7 +493,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * @return T
 	 * @throws OutOfBoundsException
 	 */
-	public function offsetGet($offset)
+	public function offsetGet($offset) : mixed
 	{
 		if (!array_key_exists($offset, $this->items)) {
 			throw new OutOfBoundsException('Undefined index: ' . $offset, 1703221322);
@@ -601,7 +601,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * @see key
 	 * @return boolean
 	 */
-	public function valid()
+	public function valid() : bool
 	{
 		return null !== key($this->items);
 	}
