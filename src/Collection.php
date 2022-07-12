@@ -56,7 +56,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * The collection element allows to extend array functionality to provide
 	 * programmers with simple methods to aggregate the data in the array.
 	 *
-	 * @param Collection<T>|mixed $e
+	 * @param Collection<T>|mixed[]|null $e
 	 */
 	public function __construct($e = null)
 	{
@@ -251,7 +251,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * [ 1 => ['a', 'b', 'c'], 2 => ['dd', 'ee'] ]
 	 *
 	 * @param \Closure|callable $callable
-	 * @return Collection<T>
+	 * @return Collection<Collection<T>>
 	 */
 	public function groupBy($callable)
 	{
