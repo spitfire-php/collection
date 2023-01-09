@@ -57,18 +57,12 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * The collection element allows to extend array functionality to provide
 	 * programmers with simple methods to aggregate the data in the array.
 	 *
-	 * @param Collection<T>|array<string|int,T>|null $e
+	 * @param T|null $e
 	 */
 	public function __construct($e = null)
 	{
 		if ($e === null) {
 			$this->items = [];
-		}
-		elseif ($e instanceof Collection) {
-			$this->items = $e->toArray();
-		}
-		elseif (is_array($e)) {
-			$this->items = $e;
 		}
 		else {
 			$this->items = [$e];
@@ -159,7 +153,7 @@ class Collection implements ArrayAccess, CollectionInterface
 		/**
 		 * @var Collection<T>
 		 */
-		$c = new Collection(array_unique($this->toArray()));
+		$c = Collection::fromArray(array_unique($this->toArray()));
 		return $c;
 	}
 	
@@ -199,7 +193,7 @@ class Collection implements ArrayAccess, CollectionInterface
 			usort($copy, $callback);
 		}
 		
-		return new Collection($copy);
+		return Collection::fromArray($copy);
 	}
 	
 	/**
@@ -236,7 +230,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 */
 	public function extract($key) : Collection
 	{
-		return new Collection(array_map(function ($e) use ($key) {
+		return Collection::fromArray(array_map(function ($e) use ($key) {
 			if (is_array($e)) {
 				return isset($e[$key])? $e[$key] : null;
 			}
@@ -275,7 +269,11 @@ class Collection implements ArrayAccess, CollectionInterface
 			$key = $callable($e);
 			
 			if (!$groups->has($key)) {
-				$groups[$key] = $group = new self();
+				/**
+				 * @var self<T>
+				 */
+				$group = new self();
+				$groups[$key] = $group;
 			}
 			else {
 				/**
@@ -297,7 +295,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 */
 	public function reverse() : Collection
 	{
-		return new Collection(array_reverse($this->toArray()));
+		return Collection::fromArray(array_reverse($this->toArray()));
 	}
 	
 	/**
@@ -311,7 +309,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 */
 	public function each(callable $callable) : Collection
 	{
-		return new Collection(array_map($callable, $this->items));
+		return Collection::fromArray(array_map($callable, $this->items));
 	}
 	
 	/**
@@ -374,11 +372,11 @@ class Collection implements ArrayAccess, CollectionInterface
 	{
 		#If there was no callback defined, then we filter the array without params
 		if ($callback === null) {
-			return new Collection(array_filter($this->items));
+			return Collection::fromArray(array_filter($this->items));
 		}
 		
 		#Otherwise we use the callback parameter to filter the array
-		return new Collection(array_filter($this->items, $callback));
+		return Collection::fromArray(array_filter($this->items, $callback));
 	}
 	
 	/**
@@ -596,10 +594,10 @@ class Collection implements ArrayAccess, CollectionInterface
 			throw new Exception('Invalid range');
 		}
 		if ($size) {
-			return new Collection(array_slice($this->items, $start, $size));
+			return Collection::fromArray(array_slice($this->items, $start, $size));
 		}
 		else {
-			return new Collection(array_slice($this->items, $start));
+			return Collection::fromArray(array_slice($this->items, $start));
 		}
 	}
 	
@@ -627,6 +625,23 @@ class Collection implements ArrayAccess, CollectionInterface
 	public function toArray()
 	{
 		return $this->items;
+	}
+	
+	/**
+	 *
+	 * @template E
+	 * @param array<string|int,E> $items
+	 * @return Collection<E>
+	 */
+	public static function fromArray(array $items) : Collection
+	{
+		/**
+		 *
+		 * @var Collection<E>
+		 */
+		$collection = new Collection();
+		$collection->items = $items;
+		return $collection;
 	}
 	
 	/**

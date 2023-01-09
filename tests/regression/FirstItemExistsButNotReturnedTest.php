@@ -16,7 +16,7 @@ class FirstItemExistsButNotReturnedTest extends TestCase
 	
 	public function test1()
 	{
-		$collection = new Collection(['hello world']);
+		$collection = Collection::fromArray(['hello world']);
 		$this->assertEquals('hello world', $collection->first());
 	}
 	

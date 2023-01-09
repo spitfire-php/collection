@@ -11,7 +11,7 @@ class TypedCollectionTest extends TestCase
 	
 	public function testAdd()
 	{
-		$collection = new TypedCollection(Exception::class, []);
+		$collection = new TypedCollection(Exception::class);
 		$collection->push(new Exception());
 		$this->assertEquals(1, $collection->count());
 	}

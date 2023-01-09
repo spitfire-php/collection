@@ -2,7 +2,7 @@
 
 /**
  *
- * @template T
+ * @template T of Object
  * @extends Collection<T>
  */
 class TypedCollection extends Collection
@@ -17,7 +17,7 @@ class TypedCollection extends Collection
 	/**
 	 *
 	 * @param class-string<T> $type
-	 * @param Collection<T>|array<mixed,T>|null $e
+	 * @param T|null $e
 	 */
 	public function __construct(string $type, $e = null)
 	{
@@ -47,5 +47,17 @@ class TypedCollection extends Collection
 		assert($element instanceof $this->type);
 		parent::push($element);
 		return $this;
+	}
+	
+	/**
+	 *
+	 * @template E of Object
+	 * @param class-string<E> $type
+	 * @param Collection<E> $parent
+	 * @return TypedCollection<E>
+	 */
+	public static function fromCollection(string $type, Collection $parent) : TypedCollection
+	{
+		return (new self($type))->add($parent);
 	}
 }
