@@ -77,7 +77,7 @@ interface CollectionInterface extends Iterator
 	 *
 	 * @return CollectionInterface<TKEY,TVALUE> The filtered collection.
 	 */
-	public function filter($callback = null);
+	public function filter(callable $callback = null);
 	
 	/**
 	 * Loops over the elements of the collection applying the callable function,
@@ -87,7 +87,7 @@ interface CollectionInterface extends Iterator
 	 * @return CollectionInterface<TKEY,TVALUE> The collection of elements after the function
 	 *                             was applied
 	 */
-	public function each($callable) : CollectionInterface;
+	public function each(callable $callable) : CollectionInterface;
 	
 	/**
 	 * Reduces the collection to a single element. It does this by looping over
@@ -98,7 +98,16 @@ interface CollectionInterface extends Iterator
 	 * @param mixed    $initial
 	 * @return mixed
 	 */
-	public function reduce($callable, $initial = null);
+	public function reduce(callable $callable, $initial = null);
+	
+	/**
+	 * Adds an item to the list of items. This function then returns the element
+	 * pushed. If you need method chaining, consider <code>$collection->add([$element])</code>
+	 *
+	 * @param TVALUE $element
+	 * @return TVALUE The element pushed
+	 */
+	public function push($element);
 	
 	/**
 	 * Returns the elements of the collection as a PHP array. Please note that in

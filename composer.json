@@ -28,7 +28,10 @@
 		"test" : [
 			"./vendor/bin/phpcs ./src -s",
 			"./vendor/bin/phpunit ./tests/",
-			"./vendor/bin/phpstan analyse ./src/ --level 7"
+			"./vendor/bin/phpstan analyse ./src/ --level 9"
+		],
+		"style" : [
+			"./vendor/bin/phpcbf ./src -s"
 		]
 	},
 

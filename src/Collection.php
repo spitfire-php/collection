@@ -2,6 +2,7 @@
 
 use ArrayAccess;
 use BadMethodCallException;
+use DivisionByZeroError;
 use Exception;
 
 /*
@@ -48,7 +49,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * The array that this object wraps around. Most of the collection's methods
 	 * are just convenience methods to make array operations more manageable.
 	 *
-	 * @var mixed[]
+	 * @var array<string|int,T>
 	 */
 	private $items;
 	
@@ -56,7 +57,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * The collection element allows to extend array functionality to provide
 	 * programmers with simple methods to aggregate the data in the array.
 	 *
-	 * @param Collection<T>|mixed[]|null $e
+	 * @param Collection<T>|array<string|int,T>|null $e
 	 */
 	public function __construct($e = null)
 	{
@@ -81,21 +82,25 @@ class Collection implements ArrayAccess, CollectionInterface
 	 *
 	 * This may destroy it's key relations.
 	 *
-	 * @return Collection<T>
+	 * @return Collection<scalar|object>
 	 */
 	public function flatten()
 	{
+		/**
+		 *
+		 * @var Collection<scalar|object>
+		 */
 		$_ret  = new self();
 		
-		foreach ($this->toArray() as $item) {
-			if ($item instanceof Collection) {
-				$_ret->add($item->flatten());
-			}
-			elseif (is_array($item)) {
-				$c = new self($item);
+		foreach ($this->items as $item) {
+			if (is_array($item)) {
+				$c = new self(array_values($item));
 				$_ret->add($c->flatten());
 			}
-			else {
+			elseif ($item instanceof Collection) {
+				$_ret->add($item->flatten());
+			}
+			elseif (is_scalar($item) || is_object($item)) {
 				$_ret->push($item);
 			}
 		}
@@ -139,7 +144,7 @@ class Collection implements ArrayAccess, CollectionInterface
 				}, true);
 			default:
 				return $this->reduce(function ($p, $c) use ($type) {
-					return $p && is_a($c, $type);
+					return $p && is_object($c) && is_a($c, $type);
 				}, true);
 		}
 	}
@@ -151,7 +156,11 @@ class Collection implements ArrayAccess, CollectionInterface
 	 */
 	public function unique()
 	{
-		return new Collection(array_unique($this->toArray()));
+		/**
+		 * @var Collection<T>
+		 */
+		$c = new Collection(array_unique($this->toArray()));
+		return $c;
 	}
 	
 	/**
@@ -197,9 +206,10 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * Returns the average value of the elements inside the collection.
 	 *
 	 * @throws BadMethodCallException If the collection contains non-numeric values
-	 * @return int|float
+	 * @throws DivisionByZeroError If the collection is empty
+	 * @return float
 	 */
-	public function avg()
+	public function avg() : float
 	{
 		return $this->sum() / $this->count();
 	}
@@ -250,21 +260,31 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * <code>$c->groupBy(function ($e) { return strlen($e); });</code>
 	 * [ 1 => ['a', 'b', 'c'], 2 => ['dd', 'ee'] ]
 	 *
-	 * @param \Closure|callable $callable
-	 * @return Collection<Collection<T>>
+	 * @param callable(T):string $callable
+	 * @return Collection<self<T>>
 	 */
 	public function groupBy($callable)
 	{
-		$groups = new self();
+		/**
+		 *
+		 * @var Collection<self<T>>
+		 */
+		$groups = new Collection();
 		
 		$this->each(function ($e) use ($groups, $callable) {
 			$key = $callable($e);
 			
-			if (!isset($groups[$key])) {
-				$groups[$key] = new self();
+			if (!$groups->has($key)) {
+				$groups[$key] = $group = new self();
+			}
+			else {
+				/**
+				 * @var self<T>
+				 */
+				$group = $groups->offsetGet($key);
 			}
 			
-			$groups[$key]->push($e);
+			$group->push($e);
 		});
 		
 		return $groups;
@@ -288,19 +308,9 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * @template E
 	 * @param callable(T):E $callable
 	 * @return Collection<E>
-	 * @throws BadMethodCallException
 	 */
-	public function each($callable) : Collection
+	public function each(callable $callable) : Collection
 	{
-		
-		/*
-		 * If the callback provided is not a valid callable then the function cannot
-		 * properly continue.
-		 */
-		if (!is_callable($callable)) {
-			throw new BadMethodCallException('Invalid callable provided to collection::each()', 1703221329);
-		}
-		
 		return new Collection(array_map($callable, $this->items));
 	}
 	
@@ -312,7 +322,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * @param E $initial
 	 * @return E
 	 */
-	public function reduce($callback, $initial = null)
+	public function reduce(callable $callback, $initial = null)
 	{
 		return array_reduce($this->items, $callback, $initial);
 	}
@@ -360,7 +370,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * @param callable(T):bool $callback
 	 * @return Collection<T>
 	 */
-	public function filter($callback = null)
+	public function filter(callable $callback = null) : Collection
 	{
 		#If there was no callback defined, then we filter the array without params
 		if ($callback === null) {
@@ -441,11 +451,11 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * Returns the current element from the collection. This is used to provide
 	 * the Iterator capabilities to the collection.
 	 *
-	 * @return T
+	 * @return ?T
 	 */
 	public function current() : mixed
 	{
-		return current($this->items);
+		return current($this->items)?: reset($this->items)?: null;
 	}
 	
 	/**
@@ -506,7 +516,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * Defines a certain index within the collection.
 	 *
 	 * @param string|int $offset
-	 * @param mixed $value
+	 * @param T $value
 	 */
 	public function offsetSet($offset, $value) : void
 	{

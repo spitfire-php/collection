@@ -28,9 +28,9 @@ class TypedCollection extends Collection
 	/**
 	 *
 	 * @param Collection<T> $elements
-	 * @return TypedCollection<T>
+	 * @return self<T>
 	 */
-	public function add(Collection $elements) : TypedCollection
+	public function add(Collection $elements) : self
 	{
 		assert($elements->containsOnly($this->type));
 		parent::add($elements);
@@ -40,9 +40,9 @@ class TypedCollection extends Collection
 	/**
 	 *
 	 * @param T $element
-	 * @return TypedCollection<T>
+	 * @return self<T>
 	 */
-	public function push($element) : TypedCollection
+	public function push($element) : self
 	{
 		assert($element instanceof $this->type);
 		parent::push($element);
