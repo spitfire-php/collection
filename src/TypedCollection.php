@@ -40,13 +40,13 @@ class TypedCollection extends Collection
 	/**
 	 *
 	 * @param T $element
-	 * @return self<T>
+	 * @return T
 	 */
-	public function push($element) : self
+	public function push($element)
 	{
 		assert($element instanceof $this->type);
 		parent::push($element);
-		return $this;
+		return $element;
 	}
 	
 	/**
