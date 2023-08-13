@@ -88,7 +88,7 @@ class Collection implements ArrayAccess, CollectionInterface
 		
 		foreach ($this->items as $item) {
 			if (is_array($item)) {
-				$c = new self(array_values($item));
+				$c = self::fromArray(array_values($item));
 				$_ret->add($c->flatten());
 			}
 			elseif ($item instanceof Collection) {
