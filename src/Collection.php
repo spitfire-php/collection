@@ -254,7 +254,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * <code>$c->groupBy(function ($e) { return strlen($e); });</code>
 	 * [ 1 => ['a', 'b', 'c'], 2 => ['dd', 'ee'] ]
 	 *
-	 * @param callable(T):string $callable
+	 * @param callable(T):string|int $callable
 	 * @return Collection<self<T>>
 	 */
 	public function groupBy($callable)
