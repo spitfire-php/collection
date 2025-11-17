@@ -72,12 +72,12 @@ interface CollectionInterface extends Iterator
 	 * passed will receive each element of the collection and if it returns true the
 	 * element will be removed from the collection.
 	 *
-	 * @param callable $callback Function returning a boolean value that indicates
-	 *                           whether the element should be removed.
+	 * @param callable(TVALUE):bool|null $callback Function returning a boolean value
+	 * that indicates whether the element should be removed.
 	 *
 	 * @return CollectionInterface<TKEY,TVALUE> The filtered collection.
 	 */
-	public function filter(callable $callback = null);
+	public function filter(?callable $callback = null);
 	
 	/**
 	 * Loops over the elements of the collection applying the callable function,

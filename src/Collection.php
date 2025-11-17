@@ -225,6 +225,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * The method does not accept values that are neither array nor object, but
 	 * will return null if the key is undefined in the array or object being used.
 	 *
+	 * @throws OutOfBoundsException
 	 * @param mixed $key
 	 * @return Collection<T>
 	 */
@@ -365,10 +366,10 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * Please note that this will return a copy of the collection and the original
 	 * collection will remain unmodified.
 	 *
-	 * @param callable(T):bool $callback
+	 * @param callable(T):bool|null $callback
 	 * @return Collection<T>
 	 */
-	public function filter(callable $callback = null) : Collection
+	public function filter(?callable $callback = null) : Collection
 	{
 		#If there was no callback defined, then we filter the array without params
 		if ($callback === null) {
