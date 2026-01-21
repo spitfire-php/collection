@@ -59,7 +59,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 *
 	 * @param T|null $e
 	 */
-	public function __construct($e = null)
+	public function __construct(mixed $e = null)
 	{
 		if ($e === null) {
 			$this->items = [];
@@ -88,7 +88,7 @@ class Collection implements ArrayAccess, CollectionInterface
 		
 		foreach ($this->items as $item) {
 			if (is_array($item)) {
-				$c = new self(array_values($item));
+				$c = self::fromArray(array_values($item));
 				$_ret->add($c->flatten());
 			}
 			elseif ($item instanceof Collection) {
@@ -225,6 +225,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * The method does not accept values that are neither array nor object, but
 	 * will return null if the key is undefined in the array or object being used.
 	 *
+	 * @throws OutOfBoundsException
 	 * @param mixed $key
 	 * @return Collection<T>
 	 */
@@ -320,7 +321,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * @param E $initial
 	 * @return E
 	 */
-	public function reduce(callable $callback, $initial = null)
+	public function reduce(callable $callback, mixed $initial = null)
 	{
 		return array_reduce($this->items, $callback, $initial);
 	}
@@ -365,10 +366,10 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * Please note that this will return a copy of the collection and the original
 	 * collection will remain unmodified.
 	 *
-	 * @param callable(T):bool $callback
+	 * @param callable(T):bool|null $callback
 	 * @return Collection<T>
 	 */
-	public function filter(callable $callback = null) : Collection
+	public function filter(?callable $callback = null) : Collection
 	{
 		#If there was no callback defined, then we filter the array without params
 		if ($callback === null) {
