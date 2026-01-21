@@ -59,7 +59,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 *
 	 * @param T|null $e
 	 */
-	public function __construct($e = null)
+	public function __construct(mixed $e = null)
 	{
 		if ($e === null) {
 			$this->items = [];
@@ -321,7 +321,7 @@ class Collection implements ArrayAccess, CollectionInterface
 	 * @param E $initial
 	 * @return E
 	 */
-	public function reduce(callable $callback, $initial = null)
+	public function reduce(callable $callback, mixed $initial = null)
 	{
 		return array_reduce($this->items, $callback, $initial);
 	}

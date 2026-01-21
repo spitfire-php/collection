@@ -94,11 +94,12 @@ interface CollectionInterface extends Iterator
 	 * the elements of the collection and combining the "initial" value or the
 	 * value of the previous iteration with the next value.
 	 *
-	 * @param callable $callable
-	 * @param mixed    $initial
-	 * @return mixed
+	 * @template TCarry
+	 * @param callable(TCarry $carry, TVALUE $item): TCarry $callable
+	 * @param TCarry $initial
+	 * @return TCarry
 	 */
-	public function reduce(callable $callable, $initial = null);
+	public function reduce(callable $callable, mixed $initial = null);
 	
 	/**
 	 * Adds an item to the list of items. This function then returns the element
